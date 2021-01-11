@@ -1,5 +1,7 @@
 package br.com.speedup.threads;
 
+import java.io.IOException;
+
 public abstract class LocalProcess implements Runnable {
 
     private long processId;
@@ -17,7 +19,7 @@ public abstract class LocalProcess implements Runnable {
         this.isRunning = false;
     }
 
-    public abstract void onReceiveMessage(Object message);
+    public abstract void onReceiveMessage(Object message) throws IOException;
 
     @Override
     public void run() {

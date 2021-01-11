@@ -6,13 +6,16 @@ import java.util.Objects;
 
 public class Term implements Serializable {
 
-    private final Long id;
-    private final Object value;
+    private Long id;
+    private Object value;
     private Boolean aNew = false;
 
-    public Term(Long id, Object value) {
-        this.id = id;
+    public void setValue(Object value) {
         this.value = value;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setaNew(Boolean aNew) {

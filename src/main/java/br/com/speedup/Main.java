@@ -1,12 +1,14 @@
 package br.com.speedup;
 
+import br.com.speedup.attributes.Attribute;
 import br.com.speedup.config.Config;
 import br.com.speedup.config.ConfigFactory;
-import br.com.speedup.terms.StorageTerm;
 import br.com.speedup.terms.TermManager;
 import br.com.speedup.threads.CreatedProcess;
 import br.com.speedup.threads.LocalProcess;
 import br.com.speedup.threads.ProcessFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -56,18 +58,32 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
 
-        args = new String[]{"CONTAINER"};
+//        args = new String[]{"CONTAINER"};
+//
+//        Config config = ConfigFactory.create(args);
+//
+//        System.out.println("DB ROOT: " + config.getDbRoot());
+//
+//        if (!Files.isDirectory(Paths.get(config.getDbRoot()))) {
+//            System.out.println("CRIANDO DIRETÓRIO: " + config.getDbRoot());
+//            Files.createDirectories(Paths.get(config.getDbRoot()));
+//        } else {
+//            System.out.println("DIRETÓRIO JA EXITE");
+//        }
 
-        Config config = ConfigFactory.create(args);
+//        System.out.println("---------------------------");
+//        System.out.println(System.getProperty("user.dir"));
+//
+//        JSONObject obj = new JSONObject("{\"name\": \"John\"}");
+//        obj.keys().forEachRemaining(s -> {
+//            System.out.println("K: " + s + " : " + obj.get(s));
+//        });
 
-        System.out.println("DB ROOT: " + config.getDbRoot());
-
-        if (!Files.isDirectory(Paths.get(config.getDbRoot()))) {
-            System.out.println("CRIANDO DIRETÓRIO: " + config.getDbRoot());
-            Files.createDirectories(Paths.get(config.getDbRoot()));
-        } else {
-            System.out.println("DIRETÓRIO JA EXITE");
-        }
+        Attribute attribute = new Attribute();
+        attribute.setName("Teste");
+        attribute.setTerms(Arrays.asList("x","a","c"));
+        new ObjectMapper().writeValueAsString(attribute);
+        System.out.println(new ObjectMapper().writeValueAsString(attribute));
 
 
     }

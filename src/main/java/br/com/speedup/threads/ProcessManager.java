@@ -1,5 +1,6 @@
 package br.com.speedup.threads;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,8 +35,11 @@ class ProcessManager {
             var process = localProcesses.parallelStream().
                     filter(localProcess -> localProcess.getProcessId() == processId).
                     collect(Collectors.toList()).get(0);
-
-            process.onReceiveMessage(o);
+            try {
+                process.onReceiveMessage(o);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }).start();
     }
 }

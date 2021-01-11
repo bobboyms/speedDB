@@ -1,5 +1,6 @@
 package br.com.speedup.terms;
 
+import br.com.speedup.GenerateConfig;
 import br.com.speedup.config.Config;
 import br.com.speedup.config.ConfigFactory;
 import junit.framework.TestCase;
@@ -12,18 +13,12 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-public class StorageTermTest extends TestCase {
-
-//    public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
-//        ByteArrayInputStream in = new ByteArrayInputStream(data);
-//        ObjectInputStream is = new ObjectInputStream(in);
-//        return is.readObject();
-//    }
+public class StorageAttributeTest extends TestCase {
 
     @Test
     public void testPersist() throws IOException {
 
-        Config config = ConfigFactory.create(new String[]{"CONTAINER"});
+        Config config = GenerateConfig.getConfig();
 
         var words = Arrays.asList("com",
                 "foi",
@@ -38,7 +33,19 @@ public class StorageTermTest extends TestCase {
                 "almoçar",
                 "pai",
                 "tatiane",
-                "são");
+                "são",
+                "mirante",
+                "izabella",
+                "80610-040",
+                "luiz",
+                "serra",
+                "curitiba",
+                "rodrigues",
+                "ji-panara",
+                "da",
+                "taliba",
+                "80610-000",
+                "paulo");
 
         List<String> docs = Arrays.asList(
                 "Tatiane foi almoçar com Isabella",
@@ -46,33 +53,28 @@ public class StorageTermTest extends TestCase {
                 "Isabella foi tomar açai com Thiago seu pai");
 
 
-        TermManager termManager = new TermManager(new StorageTerm(config));
-        StorageTerm storageTerm = new StorageTerm(config);
+        TermManager termManager = new TermManager(new StorageTerm(config), config);
 
         docs.forEach(doc ->{
             var list = termManager.generateTerms(doc);
-            storageTerm.persist(list);
+            termManager.persistTerms(list);
+        });
+
+        TermManager.TERMS.forEach((key, term) -> {
+            System.out.println(key);
+            Assert.assertEquals(true, words.contains(key));
         });
 
         Files.list(Paths.get(config.getIndexRoot()))
                 .forEach(path -> {
-
-                    System.out.println("-----------------");
-                    System.out.println(path);
-
                     try {
-                        String value = new String(Files.readAllBytes(path));
-                        var splited = value.split(" ");
-                        Term term = new Term(Long.valueOf(splited[0]), splited[1]);
-                        Assert.assertEquals(true, words.contains(term.getValue()));
                         Files.delete(path);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 });
 
-
-        Files.delete(Paths.get(config.getIndexRoot()));
+        Files.deleteIfExists(Paths.get(config.getIndexRoot()));
 
     }
 }

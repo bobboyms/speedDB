@@ -2,6 +2,7 @@ package br.com.speedup.terms;
 
 import br.com.speedup.config.Config;
 import br.com.speedup.threads.LocalProcess;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -11,12 +12,15 @@ import java.util.List;
 public class StorageTerm extends LocalProcess implements Storage {
 
     private final Config config;
+    private final ObjectMapper objectMapper;
 
     public StorageTerm(Config config) {
         this.config = config;
+        this.objectMapper = new ObjectMapper();
+        onLoadIndexFolder();
+    }
 
-        System.out.println(System.getProperty("os.name"));
-
+    private void onLoadIndexFolder() {
         if (!Files.isDirectory(Paths.get(config.getIndexRoot()))) {
             try {
                 Files.createDirectories(Paths.get(config.getIndexRoot()));
@@ -34,23 +38,17 @@ public class StorageTerm extends LocalProcess implements Storage {
     @Override
     public void persist(List<Term> terms) {
 
-        System.out.println("Termos: " + terms);
-
         terms.forEach(term -> {
-
-            final String value = term.getId().toString() + " " + term.getValue().toString();
-
-            new Thread(()->{
-                try {
-                    Files.write(Paths.get(config.getIndexRoot()+term.getId()), value.getBytes());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+            try {
+                final var json = objectMapper.writeValueAsString(term);
+                Files.write(Paths.get(config.getIndexRoot()+term.getId()), json.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 
-//    public byte[] serialize(Object obj) throws IOException {
+//    private byte[] serialize(Object obj) throws IOException {
 //        ByteArrayOutputStream out = new ByteArrayOutputStream();
 //        ObjectOutputStream os = new ObjectOutputStream(out);
 //        os.writeObject(obj);
